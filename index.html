@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoShare | Watch and Download</title>
+
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f5f9;
+            color: #202938;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 22px 8%;
+        }
+
+        header h2 {
+            font-size: 25px;
+        }
+
+        header p {
+            color: #cbd5e1;
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 45px auto;
+            padding: 20px;
+        }
+
+        .video-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,.06);
+        }
+
+        h1 {
+            font-size: 27px;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            color: #64748b;
+            margin-bottom: 22px;
+            line-height: 1.6;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 10px;
+            background: black;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button, .download-btn {
+            padding: 13px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .download-btn {
+            background: #16a34a;
+        }
+
+        button:hover, .download-btn:hover {
+            opacity: .85;
+        }
+
+        .qr-section {
+            background: white;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        #qrcode {
+            display: flex;
+            justify-content: center;
+            margin: 20px auto;
+        }
+
+        #qrcode img, #qrcode canvas {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .qr-section p {
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media(max-width: 600px) {
+            .container {
+                margin: 20px auto;
+            }
+
+            .video-card {
+                padding: 16px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .buttons button,
+            .buttons a {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h2>Pangrizampa School</h2>
+    <p>Behind the Scenes: Concert Preparation 2026</p>
+</header>
+
+<main class="container">
+
+    <section class="video-card">
+
+        <h1 id="videoTitle">School Concert 2026</h1>
+
+        <p class="description" id="videoDescription">
+            Watch the full concert video online.
+            You are welcome to download and share it.
+        </p>
+
+        <video id="videoPlayer" controls playsinline>
+            Your browser does not support video playback.
+        </video>
+
+        <div class="buttons">
+
+            <a id="downloadButton"
+               class="download-btn"
+               target="_blank"
+               rel="noopener">
+                Download Original Video
+            </a>
+
+            <button onclick="sharePage()">
+                Share Video
+            </button>
+
+        </div>
+
+    </section>
+
+    <section class="qr-section">
+
+        <h2>Scan QR Code to Watch</h2>
+
+        <p>Scan this QR code using your phone camera.</p>
+
+        <div id="qrcode"></div>
+
+        <button onclick="downloadQR()">
+            Download QR Code
+        </button>
+
+    </section>
+
+</main>
+
+<footer>
+    © 2026 Pangrizampa School. All rights reserved.
+</footer>
+
+<script>
+
+    // =================================
+    // YOUR VIDEO SETTINGS
+    // =================================
+
+const VIDEO_TITLE = "Pangrizampa School Concert Practice 2026";
+
+const VIDEO_DESCRIPTION =
+    "Watch and download";
+
+    // Replace this with your Cloudinary video URL.
+    const VIDEO_URL =
+        "https://res.cloudinary.com/f3g4ugse/video/upload/v1794584407/concert_practice.mp4";
+
+
+    // =================================
+    // DISPLAY VIDEO
+    // =================================
+
+    document.getElementById("videoTitle").textContent =
+        VIDEO_TITLE;
+
+    document.getElementById("videoDescription").textContent =
+        VIDEO_DESCRIPTION;
+
+    const player = document.getElementById("videoPlayer");
+
+    player.src = VIDEO_URL;
+
+
+    // =================================
+    // DOWNLOAD ORIGINAL VIDEO
+    // =================================
+
+    const downloadURL = VIDEO_URL.replace(
+        "/video/upload/",
+        "/video/upload/fl_attachment/"
+    );
+
+    document.getElementById("downloadButton").href =
+        downloadURL;
+
+
+    // =================================
+    // GENERATE QR CODE
+    // =================================
+
+    const websiteURL = window.location.href;
+
+    new QRCode(document.getElementById("qrcode"), {
+        text: websiteURL,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+
+
+    // =================================
+    // SHARE WEBSITE
+    // =================================
+
+    function sharePage() {
+
+        if (navigator.share) {
+
+            navigator.share({
+                title: VIDEO_TITLE,
+                text: "Watch and download this video.",
+                url: window.location.href
+            });
+
+        } else {
+
+            navigator.clipboard.writeText(window.location.href);
+
+            alert("Video link copied!");
+
+        }
+    }
+
+
+    // =================================
+    // DOWNLOAD QR CODE
+    // =================================
+
+    function downloadQR() {
+
+        const canvas = document.querySelector("#qrcode canvas");
+
+        if (canvas) {
+
+            const link = document.createElement("a");
+
+            link.download = "VideoShare-QR.png";
+
+            link.href = canvas.toDataURL("image/png");
+
+            link.click();
+
+        }
+    }
+
+</script>
+
+</body>
+</html>
